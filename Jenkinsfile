@@ -6,7 +6,7 @@ node {
     stage('kubectl') {
 	sh """
 	kubectl config view
-	kubectl set-context gke_jjahn-demo-1_us-east1-b_gke-demo
+	kubectl config set-context gke_jjahn-demo-1_us-east1-b_gke-demo
 	kubectl config view
 	kubectl get pods -n dynatrace
 	"""
