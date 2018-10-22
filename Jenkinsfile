@@ -1,5 +1,5 @@
 node {
-    def SOCKSHOP_URL = "35.231.224.62"
+    def SOCKSHOP_URL = "104.196.41.214"
     def DT_TAGNAME = "ServiceName"
     def DT_TAGVALUE = "microservices-demo-front-end"
 	
