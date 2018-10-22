@@ -23,11 +23,11 @@ node {
     stage('Run Smoke Test') {
 	   
 	dir ('dynatrace-scripts') {
-		def cmd = './pushevent.sh SERVICE CONTEXTLESS '+ DT_TAGNAME + ' ' + DT_TAGVALUE +
+		def start_test_cmd = './pushevent.sh SERVICE CONTEXTLESS '+ DT_TAGNAME + ' ' + DT_TAGVALUE +
                ' "STARTING Load Test as part of Job: " ${JOB_NAME} ' + 
                ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
-		echo cmd
-		sh cmd
+		echo start_test_cmd
+		sh start_test_cmd
         }
 
         dir ('jmeter') {
@@ -45,9 +45,11 @@ node {
 	}
 
         dir ('dynatrace-scripts') {
-            sh './pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
+             def end_test_cmd = './pushevent.sh SERVICE CONTEXTLESS '+ DT_TAGNAME + ' ' + DT_TAGVALUE +
                '"ENDING Load Test as part of Job: " ${JOB_NAME} ' + 
                ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
+	     echo end_test_cmd
+	     sh end_test_cmd
         }
      }
 }
