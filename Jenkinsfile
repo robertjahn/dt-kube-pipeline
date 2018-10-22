@@ -4,12 +4,12 @@ node {
     def DT_TAGVALUE = "microservices-demo-front-end"
 	
     stage('kubectl') {
-	sh """
-	kubectl config view
-	gcloud container clusters get-credentials gke-demo
-	kubectl config view
-	kubectl get pods -n dynatrace
-	"""
+	withCredentials([file(credentialsId: 'GC_KEY', variable: 'GC_KEY')]) {
+          sh("gcloud auth activate-service-account --key-file=${GC_KEY}")
+          sh("gcloud container clusters get-credentials gke-demo --zone us-east1-b --project jjahn-demo-1")
+  	  sh("kubectl config view")
+	  sh("kubectl get pods -n dynatrace")
+	}
     }
 	
     stage('Checkout') {
