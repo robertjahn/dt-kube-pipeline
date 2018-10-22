@@ -36,9 +36,9 @@ node {
 	    try {
                 sh "./smoke_test.sh ${SOCKSHOP_URL}"
             } finally {
-	        archiveArtifacts artifacts: 'results/**', fingerprint: true, allowEmptyArchive: true
-	        archiveArtifacts artifacts: 'results_raw/**', fingerprint: true, allowEmptyArchive: true
-	        archiveArtifacts artifacts: 'results_log/**', fingerprint: true, allowEmptyArchive: true
+	        archiveArtifacts artifacts: 'jmeter/results/**', fingerprint: true, allowEmptyArchive: true
+	        archiveArtifacts artifacts: 'jmeter/results_raw/**', fingerprint: true, allowEmptyArchive: true
+	        archiveArtifacts artifacts: 'jmeter/results_log/**', fingerprint: true, allowEmptyArchive: true
 	    }
 	}
 
