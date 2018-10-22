@@ -30,7 +30,7 @@ node {
                ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
         }
 
-        dir ('dynatrace-scripts') {
+        dir ('jmeter') {
             // stop and remove Jmeter docker container if still there
             sh "./cleanup_docker.sh jmeter-test"
 
