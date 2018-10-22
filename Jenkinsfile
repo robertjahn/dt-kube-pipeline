@@ -2,7 +2,7 @@ node {
     def SOCKSHOP_URL = "104.196.41.214"
     def DT_TAGNAME = "ServiceName"
     def DT_TAGVALUE = "microservices-demo-front-end"
-    def DT_EVENT_NAME = "Jenkins dt-kube-pipeline"
+    def DT_EVENT_NAME = "Jenkins-dt-kube-pipeline"
 	
     stage('Checkout') {
 	
