@@ -47,7 +47,7 @@ node {
 
         dir ('dynatrace-scripts') {
              def end_test_cmd = './pushevent.sh SERVICE CONTEXTLESS '+ DT_TAGNAME + ' ' + DT_TAGVALUE +
-               '"ENDING Load Test as part of Job: " ${JOB_NAME} ' + DT_EVENT_NAME +
+               ' "ENDING Load Test as part of Job: " ${JOB_NAME} ' + DT_EVENT_NAME +
                ' ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
 	     echo end_test_cmd
 	     sh end_test_cmd
