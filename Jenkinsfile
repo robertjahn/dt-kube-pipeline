@@ -40,6 +40,7 @@ node {
 	        archiveArtifacts artifacts: 'results_raw/**', fingerprint: true, allowEmptyArchive: true
 	        archiveArtifacts artifacts: 'results_log/**', fingerprint: true, allowEmptyArchive: true
 	    }
+	}
 
         dir ('dynatrace-scripts') {
             sh './pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
