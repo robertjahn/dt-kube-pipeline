@@ -26,8 +26,8 @@ node {
 		def cmd = './pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
                '"STARTING Load Test as part of Job: " ${JOB_NAME} ' + 
                ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
-		echo ${cmd}
-		sh ${cmd}
+		echo $cmd
+		sh $cmd
         }
 
         dir ('jmeter') {
