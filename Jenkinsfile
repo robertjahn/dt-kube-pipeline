@@ -20,32 +20,34 @@ node {
         }
     }
 	
-    stage('Run Smoke Test') {
-	   
-	dir ('dynatrace-scripts') {
-		sh './pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
-               '"STARTING Load Test as part of Job: " ${JOB_NAME} ' + 
-               ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
-        }
+    try {
+	stage('Run Smoke Test') {
+	  
+		dir ('dynatrace-scripts') {
+			sh './pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
+		       '"STARTING Load Test as part of Job: " ${JOB_NAME} ' + 
+		       ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
+		}
 
-        dir ('jmeter') {
-            // stop and remove Jmeter docker container if still there
-            sh "./cleanup_docker.sh jmeter-test"
+		dir ('jmeter') {
+		    // stop and remove Jmeter docker container if still there
+		    sh "./cleanup_docker.sh jmeter-test"
 
-            // run test
-	    try {
-                sh "./smoke_test.sh ${SOCKSHOP_URL}"
-            } finally {
-	        archiveArtifacts artifacts: '../results/**', fingerprint: true, allowEmptyArchive: true
-	        archiveArtifacts artifacts: '../results_raw/**', fingerprint: true, allowEmptyArchive: true
-	        archiveArtifacts artifacts: '../results_log/**', fingerprint: true, allowEmptyArchive: true
-	    }
-	}
+		    // run test
+		    sh "./smoke_test.sh ${SOCKSHOP_URL}"
+		}
 
-        dir ('dynatrace-scripts') {
-            sh './pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
-               '"ENDING Load Test as part of Job: " ${JOB_NAME} ' + 
-               ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
-        }
-     }
+		dir ('dynatrace-scripts') {
+		    sh './pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
+		       '"ENDING Load Test as part of Job: " ${JOB_NAME} ' + 
+		       ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
+		}
+	     }
+	    
+	} finally {
+	    
+	archiveArtifacts artifacts: 'results/**', fingerprint: true, allowEmptyArchive: true
+	archiveArtifacts artifacts: 'results_raw/**', fingerprint: true, allowEmptyArchive: true
+	archiveArtifacts artifacts: 'results_log/**', fingerprint: true, allowEmptyArchive: true
+    }
 }
