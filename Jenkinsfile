@@ -4,7 +4,7 @@ node {
     def DT_TAGVALUE = "microservices-demo-front-end"
 	
     stage('kubectl') {
-	sh sh """
+	sh """
 	kubectl config view
 	kubectl set-context gke_jjahn-demo-1_us-east1-b_gke-demo
 	kubectl config view
