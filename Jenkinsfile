@@ -25,7 +25,7 @@ node {
     stage('Run Smoke Test') {
 	   
 	dir ('dynatrace-scripts') {
-            sh '.pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
+            sh './pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
                '"STARTING Load Test as part of Job: " ${JOB_NAME} ' + 
                ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
         }
@@ -39,7 +39,7 @@ node {
 	}
 
         dir ('dynatrace-scripts') {
-            sh '.pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
+            sh './pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
                '"ENDING Load Test as part of Job: " ${JOB_NAME} ' + 
                ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
         }
