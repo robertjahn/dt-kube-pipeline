@@ -3,6 +3,10 @@ node {
     def DT_TAGNAME = "ServiceName"
     def DT_TAGVALUE = "microservices-demo-front-end"
 	
+    stage('kubectl') {
+	sh 'kubectl get pods -n dynatrace'
+    }
+	
     stage('Checkout') {
 	
 	// get our test code
