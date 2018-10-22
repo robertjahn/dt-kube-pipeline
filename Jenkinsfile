@@ -1,9 +1,7 @@
 node {
-    environment {
-        SOCKSHOP_URL = "35.231.224.62"
-        DT_TAGNAME = "ServiceName"
-        DT_TAGVALUE = "microservices-demo-front-end"
-    }
+    def SOCKSHOP_URL = "35.231.224.62"
+    def DT_TAGNAME = "ServiceName"
+    def DT_TAGVALUE = "microservices-demo-front-end"
 	
     stage('Checkout') {
 	
@@ -25,7 +23,7 @@ node {
     stage('Run Smoke Test') {
 	   
 	dir ('dynatrace-scripts') {
-            sh './pushevent.sh SERVICE CONTEXTLESS $DT_TAGNAME $DT_TAGVALUE ' +
+		sh './pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
                '"STARTING Load Test as part of Job: " ${JOB_NAME} ' + 
                ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
         }
@@ -35,11 +33,11 @@ node {
             sh "./cleanup_docker.sh jmeter-test"
 
             // run test
-	    sh "./smoke_test.sh $SOCKSHOP_URL"
+		sh "./smoke_test.sh ${SOCKSHOP_URL}"
 	}
 
         dir ('dynatrace-scripts') {
-            sh './pushevent.sh SERVICE CONTEXTLESS $DT_TAGNAME $DT_TAGVALUE ' +
+            sh './pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
                '"ENDING Load Test as part of Job: " ${JOB_NAME} ' + 
                ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
         }
