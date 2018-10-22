@@ -1,12 +1,20 @@
 node {
     environment {
-        URL = "35.231.224.62"
+        SOCKSHOP_URL = "35.231.224.62"
+        DT_TAGNAME = "ServiceName"
+        DT_TAGVALUE = "microservices-demo-front-end"
     }
 	
     stage('Checkout') {
 	
 	// get our test code
-	git url: 'https://github.com/dt-kube-pipeline', branch: 'master'
+        // checkout scm
+	git url: 'https://github.com/robertjahn/dt-kube-pipeline', branch: 'master'
+
+        // into a jmeter subdirectory we checkout the Jmeter shell scripts
+        dir ('jmeter') {
+	  git url: 'https://github.com/robertjahn/dt-kube-jmeter-as-container', branch: 'master'
+        }
 	    
         // into a dynatrace-cli subdirectory we checkout the CLI
         dir ('dynatrace-cli') {
@@ -17,16 +25,24 @@ node {
     stage('Run Smoke Test') {
 	   
 	dir ('dynatrace-scripts') {
-            //sh '.pushevent.sh SERVICE CONTEXTLESS DockerService SampleNodeJsStaging ' +
-            //   '"STARTING Load Test" ${JOB_NAME} "Starting a Load Test as part of the Testing stage"' + 
-            //   ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
+            sh '.pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
+               '"STARTING Load Test as part of Job: " ${JOB_NAME} ' + 
+               ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
         }
 
-        // stop docker container if running	
-        sh "./cleanup.sh jmeter-test"
+        dir ('dynatrace-scripts') {
+            // stop and remove Jmeter docker container if still there
+            sh "./cleanup_docker.sh jmeter-test"
 
-        // run test
-	sh "./smoke.sh ${URL}"
+            // run test
+	    sh "./smoke_test.sh ${SOCKSHOP_URL}"
+	}
+
+        dir ('dynatrace-scripts') {
+            sh '.pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
+               '"ENDING Load Test as part of Job: " ${JOB_NAME} ' + 
+               ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
+        }
      }
 
      post {
