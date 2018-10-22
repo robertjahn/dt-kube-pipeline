@@ -25,7 +25,7 @@ node {
     stage('Run Smoke Test') {
 	   
 	dir ('dynatrace-scripts') {
-            sh './pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
+            sh './pushevent.sh SERVICE CONTEXTLESS env.DT_TAGNAME env.DT_TAGVALUE ' +
                '"STARTING Load Test as part of Job: " ${JOB_NAME} ' + 
                ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
         }
@@ -35,11 +35,11 @@ node {
             sh "./cleanup_docker.sh jmeter-test"
 
             // run test
-	    sh "./smoke_test.sh ${SOCKSHOP_URL}"
+	    sh "./smoke_test.sh env.SOCKSHOP_URL"
 	}
 
         dir ('dynatrace-scripts') {
-            sh './pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
+            sh './pushevent.sh SERVICE CONTEXTLESS env.DT_TAGNAME env.DT_TAGVALUE ' +
                '"ENDING Load Test as part of Job: " ${JOB_NAME} ' + 
                ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
         }
