@@ -2,7 +2,6 @@ node {
     def SOCKSHOP_URL = "104.196.41.214"
     def DT_TAGNAME = "ServiceName"
     def DT_TAGVALUE = "microservices-demo-front-end"
-    def DT_EVENT_NAME = "Jenkins-dt-kube-pipeline"
 	
     stage('Checkout') {
 	
@@ -25,7 +24,7 @@ node {
 	   
 	dir ('dynatrace-scripts') {
 		def start_test_cmd = './pushevent.sh SERVICE CONTEXTLESS '+ DT_TAGNAME + ' ' + DT_TAGVALUE +
-               ' "STARTING Load Test as part of Job: " ${JOB_NAME} ' + DT_EVENT_NAME +
+               ' "STARTING Load Test as part of Job: " ${JOB_NAME} Jenkins-Start-Test ' + 
                ' ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
 		echo start_test_cmd
 		sh start_test_cmd
@@ -47,7 +46,7 @@ node {
 
         dir ('dynatrace-scripts') {
              def end_test_cmd = './pushevent.sh SERVICE CONTEXTLESS '+ DT_TAGNAME + ' ' + DT_TAGVALUE +
-               ' "ENDING Load Test as part of Job: " ${JOB_NAME} ' + DT_EVENT_NAME +
+               ' "ENDING Load Test as part of Job: " ${JOB_NAME} Jenkins-End-Test ' + 
                ' ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
 	     echo end_test_cmd
 	     sh end_test_cmd
