@@ -33,21 +33,18 @@ node {
             sh "./cleanup_docker.sh jmeter-test"
 
             // run test
-		sh "./smoke_test.sh ${SOCKSHOP_URL}"
-	}
+	    try {
+                sh "./smoke_test.sh ${SOCKSHOP_URL}"
+            } finally {
+	        archiveArtifacts artifacts: 'results/**', fingerprint: true, allowEmptyArchive: true
+	        archiveArtifacts artifacts: 'results_raw/**', fingerprint: true, allowEmptyArchive: true
+	        archiveArtifacts artifacts: 'results_log/**', fingerprint: true, allowEmptyArchive: true
+	    }
 
         dir ('dynatrace-scripts') {
             sh './pushevent.sh SERVICE CONTEXTLESS ${DT_TAGNAME} ${DT_TAGVALUE} ' +
                '"ENDING Load Test as part of Job: " ${JOB_NAME} ' + 
                ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
-        }
-     }
-
-     post {
-        always {
-	    archiveArtifacts artifacts: 'results/**', fingerprint: true, allowEmptyArchive: true
-	    archiveArtifacts artifacts: 'results_raw/**', fingerprint: true, allowEmptyArchive: true
-	    archiveArtifacts artifacts: 'results_log/**', fingerprint: true, allowEmptyArchive: true
         }
      }
 }
