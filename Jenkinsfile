@@ -86,13 +86,13 @@ node {
         dir ('dynatrace-cli') {
 	    
             sh 'python3 dtcli.py dqlr srv tag=' + DT_SERVICE_FE_TAGNAME + ':' + DT_SERVICE_FE_TAGVALUE +
-                        ' service.responsetime[avg%hour],service.responsetime[p90%hour] ' + ${DT_URL} + ' ' + ${DT_TOKEN}
+                        ' service.responsetime[avg%hour],service.responsetime[p90%hour] ${DT_URL} ${DT_TOKEN}'
             //sh 'mv dqlreport.html dqlstagingreport.html'
             archiveArtifacts artifacts: 'dqlreport.html', fingerprint: true, allowEmptyArchive: true
             
             // get the link to the service's dashboard and make it an artifact
             sh 'python3 dtcli.py link srv tag=' + DT_SERVICE_FE_TAGNAME + ':' + DT_SERVICE_FE_TAGVALUE +
-		    ' overview 60:0 ' + ${DT_URL} + ' ' + ${DT_TOKEN} + ' > dtstagelinks.txt'
+		    ' overview 60:0 ${DT_URL} ${DT_TOKEN} > dtstagelinks.txt'
             archiveArtifacts artifacts: 'dtstagelinks.txt', fingerprint: true, allowEmptyArchive: true
 	    
         }
