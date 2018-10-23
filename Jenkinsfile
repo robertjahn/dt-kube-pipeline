@@ -17,9 +17,11 @@ node {
 
         dir ('dynatrace-scripts') {
 		
-            sh './pushdeployment.sh SERVICE CONTEXTLESS ' + DT_SERVICE_FE_TAGNAME + ' ' + DT_SERVICE_FE_TAGVALUE +
-               ' ${BUILD_TAG} ${BUILD_NUMBER} ${JOB_NAME} ' + 
-               'Jenkins Jenkins-Deployment ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
+            def deploy_cmd = './pushdeployment.sh SERVICE CONTEXTLESS ' + DT_SERVICE_FE_TAGNAME + ' ' + DT_SERVICE_FE_TAGVALUE +
+               ' ${BUILD_TAG} ${BUILD_NUMBER} ${JOB_NAME} Jenkins-Deployment' + 
+               ' ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
+	    echo deploy_cmd
+	    sh deploy_cmd
         }    
     }
 	
