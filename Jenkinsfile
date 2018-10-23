@@ -74,7 +74,21 @@ node {
 	     sh end_test_cmd
         }
      }
-	
+  
+     stage('Test') {
+	dir ('dynatrace-cli') {     
+	     withCredentials([[$class: 'UsernamePasswordMultiBinding',
+                  credentialsId: 'dockerhub',
+                  usernameVariable: 'DT_URL_X',
+		  passwordVariable: 'DT_TOKEN_X']]) {
+                     def rpt_cmd = 'python3 dtcli.py dqlr srv tag=' + DT_SERVICE_FE_TAGNAME + ':' + DT_SERVICE_FE_TAGVALUE +
+                        ' service.responsetime[avg%hour],service.responsetime[p90%hour] ${$DT_URL_X} ${DT_TOKEN_X}'
+		     echo rpt_cmd
+		     sh rpt_cmd
+		     archiveArtifacts artifacts: 'dqlreport.html', fingerprint: true, allowEmptyArchive: true
+	     }
+	}	
+     }
      stage('Validate') {
         // lets see if Dynatrace AI found problems -> if so - we can stop the pipeline!
         dir ('dynatrace-scripts') {
@@ -85,10 +99,10 @@ node {
         // now lets generate a report using our CLI and lets generate some direct links back to dynatrace
         dir ('dynatrace-cli') {
 	    
-            sh 'python3 dtcli.py dqlr srv tag=' + DT_SERVICE_FE_TAGNAME + ':' + DT_SERVICE_FE_TAGVALUE +
-                        ' service.responsetime[avg%hour],service.responsetime[p90%hour] ${DT_URL} ${DT_TOKEN}'
+            //sh 'python3 dtcli.py dqlr srv tag=' + DT_SERVICE_FE_TAGNAME + ':' + DT_SERVICE_FE_TAGVALUE +
+            //            ' service.responsetime[avg%hour],service.responsetime[p90%hour] ${DT_URL} ${DT_TOKEN}'
             //sh 'mv dqlreport.html dqlstagingreport.html'
-            archiveArtifacts artifacts: 'dqlreport.html', fingerprint: true, allowEmptyArchive: true
+            //archiveArtifacts artifacts: 'dqlreport.html', fingerprint: true, allowEmptyArchive: true
             
             // get the link to the service's dashboard and make it an artifact
             sh 'python3 dtcli.py link srv tag=' + DT_SERVICE_FE_TAGNAME + ':' + DT_SERVICE_FE_TAGVALUE +
