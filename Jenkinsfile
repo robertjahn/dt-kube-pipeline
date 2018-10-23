@@ -1,15 +1,26 @@
 node {
     def SOCKSHOP_URL = "104.196.41.214"
-    def DT_TAGNAME = "ServiceName"
-    def DT_TAGVALUE = "microservices-demo-front-end"
+    def DT_SERVICE_FE_TAGNAME = "ServiceName"
+    def DT_SERVICE_FE_TAGVALUE = "microservices-demo-front-end"
 	
     stage('kubectl') {
 	withCredentials([file(credentialsId: 'GC_KEY', variable: 'GC_KEY')]) {
           sh("gcloud auth activate-service-account --key-file=${GC_KEY}")
           sh("gcloud container clusters get-credentials gke-demo --zone us-east1-b --project jjahn-demo-1")
+	  sh("gcloud compute instances list")
   	  sh("kubectl config view")
 	  sh("kubectl get pods -n dynatrace")
 	}
+    }
+	
+    stage('Deploy') {
+
+        dir ('dynatrace-scripts') {
+		
+            sh './pushdeployment.sh SERVICE CONTEXTLESS ' + DT_SERVICE_FE_TAGNAME + ' ' + DT_SERVICE_FE_TAGVALUE +
+               ' ${BUILD_TAG} ${BUILD_NUMBER} ${JOB_NAME} ' + 
+               'Jenkins Jenkins-Deployment ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
+        }    
     }
 	
     stage('Checkout') {
@@ -32,7 +43,7 @@ node {
     stage('Run Smoke Test') {
 	   
 	dir ('dynatrace-scripts') {
-		def start_test_cmd = './pushevent.sh SERVICE CONTEXTLESS '+ DT_TAGNAME + ' ' + DT_TAGVALUE +
+		def start_test_cmd = './pushevent.sh SERVICE CONTEXTLESS '+ DT_SERVICE_FE_TAGNAME + ' ' + DT_SERVICE_FE_TAGVALUE +
                ' "STARTING Load Test as part of Job: " ${JOB_NAME} Jenkins-Start-Test ' + 
                ' ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
 		echo start_test_cmd
@@ -54,7 +65,7 @@ node {
 	}
 
         dir ('dynatrace-scripts') {
-             def end_test_cmd = './pushevent.sh SERVICE CONTEXTLESS '+ DT_TAGNAME + ' ' + DT_TAGVALUE +
+             def end_test_cmd = './pushevent.sh SERVICE CONTEXTLESS '+ DT_SERVICE_FE_TAGNAME + ' ' + DT_SERVICE_FE_TAGVALUE +
                ' "ENDING Load Test as part of Job: " ${JOB_NAME} Jenkins-End-Test ' + 
                ' ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
 	     echo end_test_cmd
