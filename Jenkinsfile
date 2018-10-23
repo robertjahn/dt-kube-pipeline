@@ -18,7 +18,7 @@ node {
         dir ('dynatrace-scripts') {
 		
             def deploy_cmd = './pushdeployment.sh SERVICE CONTEXTLESS ' + DT_SERVICE_FE_TAGNAME + ' ' + DT_SERVICE_FE_TAGVALUE +
-               ' ${BUILD_TAG} ${BUILD_NUMBER} ${JOB_NAME} Jenkins-Deployment' + 
+               ' ${BUILD_TAG} ${BUILD_NUMBER} ${JOB_NAME} ${JENKINS_URL}' + 
                ' ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT}'
 	    echo deploy_cmd
 	    sh deploy_cmd
@@ -74,4 +74,25 @@ node {
 	     sh end_test_cmd
         }
      }
+	
+     stage('Validate') {
+        // lets see if Dynatrace AI found problems -> if so - we can stop the pipeline!
+        dir ('dynatrace-scripts') {
+            DYNATRACE_PROBLEM_COUNT = sh (script: './checkforproblems.sh', returnStatus : true)
+            echo "Dynatrace Problems Found: ${DYNATRACE_PROBLEM_COUNT}"
+        }
+        
+        // now lets generate a report using our CLI and lets generate some direct links back to dynatrace
+        dir ('dynatrace-cli') {
+            sh 'python3 dtcli.py dqlr srv tag=' + DT_SERVICE_FE_TAGNAME + ':' + DT_SERVICE_FE_TAGVALUE +
+                        'service.responsetime[avg%hour],service.responsetime[p90%hour] ${DT_URL} ${DT_TOKEN}'
+            //sh 'mv dqlreport.html dqlstagingreport.html'
+            archiveArtifacts artifacts: 'dqlreport.html', fingerprint: true, allowEmptyArchive: true
+            
+            // get the link to the service's dashboard and make it an artifact
+            sh 'python3 dtcli.py link srv tag=' + DT_SERVICE_FE_TAGNAME + ':' + DT_SERVICE_FE_TAGVALUE +
+                        'overview 60:0 ${DT_URL} ${DT_TOKEN} > dtstagelinks.txt'
+            archiveArtifacts artifacts: 'dtstagelinks.txt', fingerprint: true, allowEmptyArchive: true
+        }
+    }
 }
